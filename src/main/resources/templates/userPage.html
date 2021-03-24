@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о пользователе</title>
+
+    <meta name="viewport" charset="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container mt-2 ml-2">
+    <h3 th:object="${user}" th:text="*{username}"></h3>
+
+    <div class="list-inline" th:object="${user}">
+        <label class="list-inline-item"><strong>Имя:</strong></label>
+        <p class="list-inline-item" th:text="*{firstName}"></p>
+    </div>
+
+    <div class="list-inline" th:object="${user}">
+        <label class="list-inline-item"><strong>Фамилия:</strong></label>
+        <p class="list-inline-item" th:text="*{surName}"></p>
+    </div>
+
+    <div class="list-inline" th:object="${user}">
+        <label class="list-inline-item"><strong>Возраст:</strong></label>
+        <p class="list-inline-item" th:text="*{age}"></p>
+    </div>
+
+    <div class="list-inline" th:object="${user}">
+        <label class="list-inline-item"><strong>Почта:</strong></label>
+        <p class="list-inline-item" th:text="*{email}"></p>
+    </div>
+
+
+    <div class="list"><strong>Список ролей</strong>
+        <ul th:object="${user}" th:each="role : ${user.getRoles()}">
+            <li th:text="${role.getAuthority()}"></li>
+        </ul>
+    </div>
+
+    <button class="btn btn-primary" type="submit"
+            onclick="window.location.href='/home'">На главную страницу
+    </button>
+
+    <!--        <div class="col-sm-2 col-form-label">-->
+    <!--            <label th:value="*{surName}"><i>Фамилия</i></label>-->
+    <!--        </div>-->
+
+    <!--        <div class="col-sm-2 col-form-label">-->
+    <!--            <label th:value="*{password}"><i>Пароль</i></label>-->
+    <!--        </div>-->
+
+    <!--        <div class="col-sm-2 col-form-label">-->
+    <!--            <label th:value="*{age}"><i>Возраст</i></label>-->
+    <!--        </div>-->
+
+    <!--        <div class="col-sm-2 col-form-label">-->
+    <!--            <label th:value="*{email}"><i>Почта</i></label>-->
+    <!--        </div>-->
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Основная страница</title>
+
+    <meta name="viewport" charset="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="mt-4 ml-4">
+        <h2 th:inline="text">Hello, <i>[[${#httpServletRequest.remoteUser}]]!</i></h2>
+    </div>
+
+
+    <div class="float-left">
+        <div class="row">
+            <div class="col-sm">
+                <button class="btn btn-primary ml-4" type="submit" th:method="post"
+                        onclick="window.location.href='/logout'">Разлогиниться
+                </button>
+            </div>
+            <div class="col-sm">
+                <button class="btn btn-primary" type="submit"
+                        onclick="window.location.href='/user/'">Информация о пользователе
+                </button>
+            </div>
+            <div class="col-sm" th:object="${rolesName}">
+                    <button th:if="${rolesName.contains('ADMIN')}" class="btn btn-dark" type="submit"
+                            onclick="window.location.href='/admin/'">Список пользователей
+                    </button>
+            </div>
+        </div>
+    </div>
+
+
+
+<!--    <form th:action="@{/logout}" method="post">-->
+<!--        <input type="submit" value="Sign Out"/>-->
+<!--    </form>-->
+
+
+<!--    <div>-->
+<!--        <a th:href="@{/user/}">Информация о пользователе</a>-->
+<!--    </div>-->
+
+<!--    <div sec:authorize="hasAuthority('ADMIN')">-->
+<!--        <a th:href="@{/admin/}">Список пользователей</a>-->
+<!--                   "${user.getAuthorities().contains('ADMIN')}"-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        Role(s):-->
+<!--        <p th:each="authority : ${#authentication.getAuthorities()}"-->
+<!--           th:text="${authority.getAuthority()}">-->
+<!--        </p>-->
+<!--    </div>-->
+
+
+
+
+</body>
+</html>

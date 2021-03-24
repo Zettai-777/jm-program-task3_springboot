@@ -1,0 +1,57 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<html>
+<head>
+    <title>Пользователи</title>
+
+    <meta name="viewport" charset="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+</head>
+
+<body>
+
+<div class="mt-2 ml-4">
+    <h4>Пользователи</h4>
+</div>
+
+<div class="container mt-2 ml-2">
+    <table class="table table-sm table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">НИК</th>
+                <th scope="col">ИМЯ</th>
+                <th scope="col">ФАМИЛИЯ</th>
+                <th scope="col">ВОЗРАСТ</th>
+                <th scope="col">ПОЧТА</th>
+                <th scope="col">ДЕЙСТВИЯ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${allUsers}">
+                <td th:text="${user.getUsername()}"></td>
+                <td th:text="${user.getFirstName()}"></td>
+                <td th:text="${user.getSurName()}"></td>
+                <td th:text="${user.getAge()}"></td>
+                <td th:text="${user.getEmail()}"></td>
+                <td>
+                    <a class="btn btn-dark" th:href="@{/admin/updateUserInfo/{id}(id=${user.getId()})}">Обновить</a>
+                    <a class="btn btn-dark" th:href="@{/admin/deleteUserById/{userId}(userId=${user.getId()})}">Удалить</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<button class="btn btn-dark ml-4" type="submit"
+        onclick="window.location.href='/admin/addUser'">Добавить пользователя
+</button>
+
+<button class="btn btn-dark ml-2" type="submit"
+        onclick="window.location.href='/home'">На главную страницу
+</button>
+
+</body>
+</html>

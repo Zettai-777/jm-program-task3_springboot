@@ -1,0 +1,135 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Действия с пользователем</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" charset="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+
+</head>
+<body>
+<div class="container mt-2 ml-2" th:object="${user}">
+
+
+    <h4 th:if="${user.getUsername() == null}">Новый пользователь</h4>
+    <h4 th:unless="${user.getUsername() == null}">Редактировать пользователя</h4>
+
+    <form th:action="@{${baseUrl}}"
+          th:with="baseUrl=(${user.getUsername()==null}? '/admin/saveUser' : '/admin/updateUserInfo/__${user.id}__')"
+          th:href="@{${baseUrl}}" th:method="post" th:object="${user}">
+
+        <input th:if="${user.getUsername() != null}" type="hidden" name="id" id="id" th:value="${user.getId()}">
+
+        <div class="form-group-row" th:object="${user}">
+            <label class="col-sm-2 col-form-label"><strong>Логин</strong></label>
+            <input type="text" th:field="*{username}"
+                   th:class="${#fields.hasErrors('username')} ? 'form-control is-invalid' : 'form-control'"
+                   th:value="(${user.getUsername()} == null) ? '' : ${user.getUsername()}"
+                   placeholder="Введите логин пользователя">
+            <p th:if="${#fields.hasErrors('username')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('username')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="form-group-row" th:object="${user}">
+            <label class="col-sm-2 col-form-label"><strong>Пароль</strong></label>
+            <input type="password" th:field="*{password}" th:required="false"
+                   th:class="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"
+                   th:value="(${user.getPassword()} == null) ? '' : ${user.getPassword()}"
+                   placeholder="Введите пароль пользователя">
+            <p th:if="${#fields.hasErrors('password')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('password')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="form-group-row" th:object="${user}">
+            <label class="col-sm-2 col-form-label"><strong>Имя</strong></label>
+            <input type="text" th:field="*{firstName}"
+                   th:class="${#fields.hasErrors('firstName')} ? 'form-control is-invalid' : 'form-control'"
+                   th:value="(${user.getFirstName()} == null) ? '' : ${user.getFirstName()}"
+                   placeholder="Введите имя пользователя">
+            <p th:if="${#fields.hasErrors('firstName')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('firstName')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="form-group-row" th:object="${user}">
+            <label class="col-sm-2 col-form-label"><strong>Фамилия</strong></label>
+            <input type="text" th:field="*{surName}"
+                   th:class="${#fields.hasErrors('surName')} ? 'form-control is-invalid' : 'form-control'"
+                   th:value="(${user.getSurName()} == null) ? '' : ${user.getSurName()}"
+                   placeholder="Введите фамилию пользователя">
+            <p th:if="${#fields.hasErrors('surName')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('surName')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="form-group-row" th:object="${user}">
+            <label class="col-sm-2 col-form-label"><strong>Возраст</strong></label>
+            <input type="text" th:field="*{age}"
+                   th:class="${#fields.hasErrors('age')} ? 'form-control is-invalid' : 'form-control'"
+                   th:value="(${user.getAge()} == null) ? '' : ${user.getAge()}"
+                   placeholder="Введите возраст пользователя">
+            <p th:if="${#fields.hasErrors('age')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('age')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="form-group-row" th:object="${user}">
+            <label class="col-sm-2 col-form-label"><strong>Почта</strong></label>
+            <input type="text" th:field="*{email}"
+                   th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                   th:value="(${user.getEmail()} == null) ? '' : ${user.getEmail()}"
+                   placeholder="Введите почту пользователя">
+            <p th:if="${#fields.hasErrors('email')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('email')}}">
+            </div>
+            </p>
+        </div>
+
+        <fieldset th:object="${user}">
+            <strong>Выберите роли:</strong>
+            <div class="checkbox" th:each="role : ${roles}">
+                <label>
+                    <input th:value="${role}"  type="checkbox" th:field="*{roles}">
+                    <span th:text="${role.getAuthority()}" th:remove="tag"></span>
+                </label>
+            </div>
+            <span class="help-block" th:each="msg : ${#fields.errors('roles')}"
+                    th:text="${msg}">
+                        Some error message for this field
+                    </span>
+        </fieldset>
+
+
+        <div class="row g-2">
+            <div>
+                <p th:if="${user.username == null}">
+                    <button class="btn btn-dark mt-3" type="submit">Добавить нового пользователя</button>
+                </p>
+                <p th:unless="${user.username == null}">
+                    <button class="btn btn-primary mt-3" type="submit">Изменить пользователя</button>
+                </p>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta name="viewport" charset="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+    <title>Регистрация</title>
+</head>
+<body>
+
+<!--<form method="post" th:action="@{/registration}" th:object="${user}">-->
+
+<!--    <div>-->
+<!--        <label> Логин :-->
+<!--            <input type="text" name="username" th:field="*{username}"/>-->
+<!--        </label>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <label> Пароль:-->
+<!--            <input type="password" name="password" th:field="*{password}"/>-->
+<!--        </label>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <label> Повторите пароль:-->
+<!--            <input type="password" name="password" th:field="*{passwordConfirmation}"/>-->
+<!--        </label>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <label> Имя :-->
+<!--            <input type="text" name="firstname" th:field="*{firstName}"/>-->
+<!--        </label>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <label> Фамилия :-->
+<!--            <input type="text" name="surname" th:field="*{surName}"/>-->
+<!--        </label>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <label> Возраст :-->
+<!--            <input type="number" name="age" th:field="*{age}"/>-->
+<!--        </label>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <label> Почта :-->
+<!--            <input type="email" name="email" th:field="*{email}"/>-->
+<!--        </label>-->
+<!--    </div>-->
+
+<!--    <div>-->
+<!--        <input type="submit" value="Зарегистрируйся!"/>-->
+<!--    </div>-->
+
+<!--</form>-->
+<div class="container">
+
+    <h4>Добавляем нового пользователя</h4>
+
+    <form class="row g-3-sm" th:object="${user}" th:action="@{/registration}"
+          th:method="post">
+        <div class="col-md-4" th:object="${user}">
+            <label for="validationUsername" class="form-label">Логин</label>
+            <input type="text" th:field="*{username}"
+                   th:class="${#fields.hasErrors('username')} or (${usernameError != null}) ? 'form-control is-invalid' : 'form-control'"
+                   id="validationUsername" placeholder="Введите Ваш логин">
+            <p th:if="${#fields.hasErrors('username')}">
+                <div class="invalid-feedback">
+                    <p th:text="${usernameError != null} ? ${usernameError} : ${{#fields.errors('username')}}">
+                </div>
+            </p>
+        </div>
+
+        <div class="col-md-4" th:object="${user}">
+            <label for="validationPassword" class="form-label">Пароль</label>
+            <input type="text" th:field="*{password}"
+                   th:class="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"
+                   id="validationPassword" placeholder="Введите Ваш пароль">
+            <p th:if="${#fields.hasErrors('password')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('password')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="col-md-4" th:object="${user}">
+            <label for="validationPasswordConfirmation" class="form-label">Подтверждение пароля</label>
+            <input type="text" th:field="*{passwordConfirmation}"
+                   th:class="${passwordError!= null} ? 'form-control is-invalid' : 'form-control'"
+                   id="validationPasswordConfirmation" placeholder="Повторите Ваш пароль">
+            <p th:if="${passwordError != null}">
+            <div class="invalid-feedback">
+                <p th:text="${passwordError}">
+            </div>
+            </p>
+        </div>
+
+        <div class="col-md-4" th:object="${user}">
+            <label for="validationFirstUsername" class="form-label">Имя</label>
+            <input type="text" th:field="*{firstName}"
+                   th:class="${#fields.hasErrors('firstName')} ? 'form-control is-invalid' : 'form-control'"
+                   id="validationFirstUsername" placeholder="Введите Ваше имя">
+            <p th:if="${#fields.hasErrors('firstName')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('firstName')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="col-md-4" th:object="${user}">
+            <label for="validationSurname" class="form-label">Фамилия</label>
+            <input type="text" th:field="*{surName}"
+                   th:class="${#fields.hasErrors('surName')} ? 'form-control is-invalid' : 'form-control'"
+                   id="validationSurname" placeholder="Введите Вашу фамилию">
+            <p th:if="${#fields.hasErrors('surName')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('surName')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="col-md-4" th:object="${user}">
+            <label for="validationAge" class="form-label">Возраст</label>
+            <input type="text" th:field="*{age}"
+                   th:class="${#fields.hasErrors('age')} ? 'form-control is-invalid' : 'form-control'"
+                   id="validationAge" placeholder="Введите Ваш возраст">
+            <p th:if="${#fields.hasErrors('age')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('age')}}">
+            </div>
+            </p>
+        </div>
+
+        <div class="col-md-4" th:object="${user}">
+            <label for="validationEmail" class="form-label">Почта</label>
+            <input type="text" th:field="*{email}"
+                   th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                   id="validationEmail" placeholder="Введите Вашу почту">
+            <p th:if="${#fields.hasErrors('email')}">
+            <div class="invalid-feedback">
+                <p th:text="${{#fields.errors('email')}}">
+            </div>
+            </p>
+        </div>
+
+
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+        </div>
+    </form>
+</div>
+
+
+
+</body>
+</html>
