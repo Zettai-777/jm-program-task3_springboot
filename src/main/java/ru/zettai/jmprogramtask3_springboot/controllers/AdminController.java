@@ -40,22 +40,28 @@ public class AdminController {
     }
 
     @GetMapping("/")
-    public String showAllUsers(Model model) {
-        List<User> allUsers = userService.getAllUsers();
-        model.addAttribute("allUsers", allUsers);
-        return "all-users";
-    }
-
-    @GetMapping("/addUser")
-    public String addNewUser(
+    public String showAllUsers(
             @ModelAttribute("user") User user,
             Model model) {
+        List<User> allUsers = userService.getAllUsers();
+        model.addAttribute("allUsers", allUsers);
         model.addAttribute("user", user);
         model.addAttribute("roles", roleService.getAllRoles());
-        return "edit-user";
+        return "admin-panel";
+//        return "all-users";
     }
 
+//    @GetMapping("/addUser")
+//    public String addNewUser(
+//            @ModelAttribute("user") User user,
+//            Model model) {
+//        model.addAttribute("user", user);
+//        model.addAttribute("roles", roleService.getAllRoles());
+//        return "edit-user";
+//    }
 
+
+//    @PostMapping("/")
     @PostMapping("/saveUser")
     public String saveUser(
             @Valid @ModelAttribute("user") User user,
@@ -67,10 +73,12 @@ public class AdminController {
             Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errorsMap);
             model.addAttribute("user", user);
-            return "edit-user";
+//            return "edit-user";
+            return "admin-panel";
         }else {
             userService.saveUser(user);
-            return "redirect:/admin/";
+//            return "redirect:/admin/";
+            return "admin-panel";
         }
     }
 
@@ -94,18 +102,21 @@ public class AdminController {
             model.mergeAttributes(errorsMap);
             System.out.println("User roles after validation: " + user.getRoles());
             model.addAttribute("user", user);
-            return "edit-user";
+//            return "edit-user";
+            return "admin-panel";
         }else {
             user.setPassword(encoder.encode(user.getPassword()));
             userService.updateUser(user);
-            return "redirect:/admin/";
+//            return "redirect:/admin/";
+            return "admin-panel";
         }
     }
 
     @RequestMapping("/deleteUserById/{userId}")
     public String deleteUser(@PathVariable(name = "userId") long id) {
         userService.deleteUserById(id);
-        return "redirect:/admin/";
+        return "admin-panel";
+//        return "redirect:/admin/";
     }
 
 }

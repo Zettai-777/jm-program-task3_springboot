@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <title>Панель администратора</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+
+    <ul class="navbar-nav mr-auto">
+        <div class="nav-item">
+            <a class="text" style="color:white;">USERNAME с ролями ADMIN, USER</a>
+        </div>
+    </ul>
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <form class="form" action="/logout" method="post">
+                <!--                <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
+                <!--                <a href="#" class="btn btn-dark navbar-left" type="submit">Разлогиньтесь</a>-->
+                <a href="#" class="nav-link navbar-left" type="submit">Разлогиньтесь</a>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+
+<div class="row mt-3">
+    <div class="col-2">
+        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+               aria-controls="v-pills-home" aria-selected="true">Администратор</a>
+            <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
+               aria-controls="v-pills-profile" aria-selected="false">Пользователь</a>
+        </div>
+    </div>
+
+    <div class="col-10">
+
+        <div class="tab-content" id="v-pills-tabContent">
+
+            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+
+                <h1>Панель администратора</h1>
+
+                <nav>
+                    <div class="nav nav-tabs" id="admin" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-users-tab" data-toggle="tab" href="#nav-users"
+                           role="tab" aria-controls="nav-users" aria-selected="true">
+                            Пользователи
+                        </a>
+                        <a class="nav-item nav-link" id="nav-adduser-tab" data-toggle="tab" href="#nav-adduser"
+                           role="tab" aria-controls="nav-adduser" aria-selected="false">
+                            Добавить пользователя
+                        </a>
+                    </div>
+                </nav>
+
+                <div class="tab-content" id="adminContent">
+                    <div class="tab-pane fade show active" id="nav-users" role="tabpanel"
+                         aria-labelledby="nav-users-tab">
+                        <div class="card" style="width: 95%">
+                            <div class="card-header">
+                                Все пользователи
+                            </div>
+                            <div class="card-body">
+                                <div class="container-flex">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">НИК</th>
+                                            <th scope="col">ИМЯ</th>
+                                            <th scope="col">ФАМИЛИЯ</th>
+                                            <th scope="col">ВОЗРАСТ</th>
+                                            <th scope="col">ПОЧТА</th>
+                                            <th scope="col">РОЛИ</th>
+                                            <th scope="col">ИЗМЕНИТЬ</th>
+                                            <th scope="col">УДАЛИТЬ</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="user : ${allUsers}">
+                                            <td th:text="${user.getId()}"></td>
+                                            <td th:text="${user.getUsername()}"></td>
+                                            <td th:text="${user.getFirstName()}"></td>
+                                            <td th:text="${user.getSurName()}"></td>
+                                            <td th:text="${user.getAge()}"></td>
+                                            <td th:text="${user.getEmail()}"></td>
+                                            <td th:text="${user.getRoles()}"></td>
+
+                                            <td>
+                                                <a class="btn btn-info"
+                                                   th:href="@{/admin/updateUserInfo/{id}(id=${user.getId()})}"
+                                                   data-toggle="modal" data-target="#editModal">Обновить</a>
+                                            </td>
+
+
+
+                                            <td>
+                                                <a class="btn btn-danger"
+                                                   th:href="@{/admin/deleteUserById/{userId}(userId=${user.getId()})}"
+                                                   data-toggle="modal" data-target="#deleteModal">Удалить</a>
+                                            </td>
+
+
+                                        </tr>
+
+                                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="editModalLabel" aria-hidden="true">
+
+                                            <div class="modal-dialog" role="form">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editModalLabel">Редактировать
+                                                            пользователя</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="container" th:object="${user}">
+
+                                                            <form th:action="@{'/admin/updateUserInfo/__${user.id}__'}"
+                                                                  th:method="post" th:object="${user}">
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label>ID</label>
+                                                                    <input
+                                                                            th:class="'form-control'"
+                                                                            type="text" name="id" id="update_id"
+                                                                            th:value="${user.getId()}"
+                                                                            readonly>
+
+                                                                </div>
+
+                                                                <!--                                                                    <div class="form-group" th:object="${user}">-->
+                                                                <!--                                                                        <label for="username">Логин</label>-->
+                                                                <!--                                                                        <input type="text" th:field="*{username}"-->
+                                                                <!--                                                                               th:class="${#fields.hasErrors('username')} ? 'form-control is-invalid' : 'form-control'"-->
+                                                                <!--                                                                               th:value="(${user.getUsername()} == null) ? '' : ${user.getUsername()}"-->
+                                                                <!--                                                                               placeholder="Введите логин пользователя">-->
+                                                                <!--                                                                        <p th:if="${#fields.hasErrors('username')}">-->
+                                                                <!--                                                                        <div class="invalid-feedback">-->
+                                                                <!--                                                                            <p th:text="${{#fields.errors('username')}}">-->
+                                                                <!--                                                                        </div>-->
+                                                                <!--                                                                        </p>-->
+                                                                <!--                                                                    </div>-->
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Пароль</strong></label>
+                                                                    <input type="password" th:field="*{password}"
+                                                                           th:required="false"
+                                                                           th:class="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getPassword()} == null) ? '' : ${user.getPassword()}"
+                                                                           placeholder="Введите пароль пользователя">
+                                                                    <p th:if="${#fields.hasErrors('password')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('password')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Имя</strong></label>
+                                                                    <input type="text" th:field="*{firstName}"
+                                                                           th:class="${#fields.hasErrors('firstName')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getFirstName()} == null) ? '' : ${user.getFirstName()}"
+                                                                           placeholder="Введите имя пользователя">
+                                                                    <p th:if="${#fields.hasErrors('firstName')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('firstName')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Фамилия</strong></label>
+                                                                    <input type="text" th:field="*{surName}"
+                                                                           th:class="${#fields.hasErrors('surName')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getSurName()} == null) ? '' : ${user.getSurName()}"
+                                                                           placeholder="Введите фамилию пользователя">
+                                                                    <p th:if="${#fields.hasErrors('surName')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('surName')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Возраст</strong></label>
+                                                                    <input type="text" th:field="*{age}"
+                                                                           th:class="${#fields.hasErrors('age')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getAge()} == null) ? '' : ${user.getAge()}"
+                                                                           placeholder="Введите возраст пользователя">
+                                                                    <p th:if="${#fields.hasErrors('age')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('age')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Почта</strong></label>
+                                                                    <input type="text" th:field="*{email}"
+                                                                           th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getEmail()} == null) ? '' : ${user.getEmail()}"
+                                                                           placeholder="Введите почту пользователя">
+                                                                    <p th:if="${#fields.hasErrors('email')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('email')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <fieldset th:object="${user}"
+                                                                          th:each="role : ${roles}">
+                                                                    <strong>Выберите роли:</strong>
+                                                                    <select class="custom-select" multiple>
+                                                                        <option value="1">ADMIN</option>
+                                                                        <option value="2">USER</option>
+                                                                    </select>
+
+                                                                    <!--                                            <div class="checkbox" th:each="role : ${roles}">-->
+                                                                    <!--                                                <label>-->
+                                                                    <!--                                                    <input th:value="${role}" type="checkbox" th:field="*{roles}">-->
+                                                                    <!--                                                    <span th:text="${role.getAuthority()}" th:remove="tag"></span>-->
+                                                                    <!--                                                </label>-->
+                                                                    <!--                                            </div>-->
+                                                                    <!--                                            <span class="help-block" th:each="msg : ${#fields.errors('roles')}"-->
+                                                                    <!--                                                  th:text="${msg}">-->
+                                                                    <!--                                                    Some error message for this field-->
+                                                                    <!--                                            </span>-->
+                                                                </fieldset>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Закрыть
+                                                            </button>
+                                                            <button type="button" class="btn btn-primary">
+                                                                Редактировать
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="form">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel">Удалить
+                                                            пользователя</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="container" th:object="${user}">
+
+                                                            <form th:object="${user}">
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label>ID</label>
+                                                                    <input th:field="*{id}"
+                                                                           th:class="form-control"
+                                                                           type="text" name="id"
+                                                                           th:value="${user.getId()}"
+                                                                           readonly>
+
+                                                                </div>
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label for="username">Логин</label>
+                                                                    <input type="text" th:field="*{username}"
+
+                                                                           th:class="${#fields.hasErrors('username')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getUsername()} == null) ? '' : ${user.getUsername()}"
+                                                                           placeholder="Введите логин пользователя"
+                                                                           readonly>
+                                                                    <p th:if="${#fields.hasErrors('username')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('username')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Имя</strong></label>
+                                                                    <input type="text" th:field="*{firstName}"
+                                                                           th:class="${#fields.hasErrors('firstName')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getFirstName()} == null) ? '' : ${user.getFirstName()}"
+                                                                           placeholder="Введите имя пользователя"
+                                                                           readonly>
+                                                                    <p th:if="${#fields.hasErrors('firstName')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('firstName')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Фамилия</strong></label>
+                                                                    <input type="text" th:field="*{surName}"
+                                                                           th:class="${#fields.hasErrors('surName')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getSurName()} == null) ? '' : ${user.getSurName()}"
+                                                                           placeholder="Введите фамилию пользователя"
+                                                                           readonly>
+                                                                    <p th:if="${#fields.hasErrors('surName')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('surName')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Возраст</strong></label>
+                                                                    <input type="text" th:field="*{age}"
+                                                                           th:class="${#fields.hasErrors('age')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getAge()} == null) ? '' : ${user.getAge()}"
+                                                                           placeholder="Введите возраст пользователя"
+                                                                           readonly>
+                                                                    <p th:if="${#fields.hasErrors('age')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('age')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="form-group" th:object="${user}">
+                                                                    <label><strong>Почта</strong></label>
+                                                                    <input type="text" th:field="*{email}"
+                                                                           th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                                                                           th:value="(${user.getEmail()} == null) ? '' : ${user.getEmail()}"
+                                                                           placeholder="Введите почту пользователя"
+                                                                           readonly>
+                                                                    <p th:if="${#fields.hasErrors('email')}">
+                                                                    <div class="invalid-feedback">
+                                                                        <p th:text="${{#fields.errors('email')}}">
+                                                                    </div>
+                                                                    </p>
+                                                                </div>
+
+                                                                <fieldset th:object="${user}"
+                                                                          th:each="role : ${roles}">
+                                                                    <strong>Выберите роли:</strong>
+                                                                    <select class="custom-select" multiple
+                                                                            readonly>
+                                                                        <option value="1">ADMIN</option>
+                                                                        <option value="2">USER</option>
+                                                                    </select>
+
+                                                                    <!--                                            <div class="checkbox" th:each="role : ${roles}">-->
+                                                                    <!--                                                <label>-->
+                                                                    <!--                                                    <input th:value="${role}" type="checkbox" th:field="*{roles}">-->
+                                                                    <!--                                                    <span th:text="${role.getAuthority()}" th:remove="tag"></span>-->
+                                                                    <!--                                                </label>-->
+                                                                    <!--                                            </div>-->
+                                                                    <!--                                            <span class="help-block" th:each="msg : ${#fields.errors('roles')}"-->
+                                                                    <!--                                                  th:text="${msg}">-->
+                                                                    <!--                                                    Some error message for this field-->
+                                                                    <!--                                            </span>-->
+                                                                </fieldset>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Закрыть
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger">
+                                                                Удалить
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-adduser" role="tabpanel"
+                         aria-labelledby="nav-adduser-tab">
+                        <div class="card" style="width: 95%;">
+                            <div class="card-header">
+                                Добавить нового пользователя
+                            </div>
+                            <div class="car-body mx-auto">
+                                <div class="container" th:object="${user}">
+
+                                    <form th:action="@{'/admin/saveUser'}"
+                                          th:method="post" th:object="${user}">
+
+                                        <input th:if="${user.getUsername() != null}" type="hidden" name="id" id="id"
+                                               th:value="${user.getId()}">
+
+                                        <div class="form-group" th:object="${user}">
+                                            <label for="username">Логин</label>
+                                            <input type="text" th:field="*{username}"
+                                                   id="username"
+                                                   th:class="${#fields.hasErrors('username')} ? 'form-control is-invalid' : 'form-control'"
+                                                   th:value="(${user.getUsername()} == null) ? '' : ${user.getUsername()}"
+                                                   placeholder="Введите логин пользователя">
+                                            <p th:if="${#fields.hasErrors('username')}">
+                                            <div class="invalid-feedback">
+                                                <p th:text="${{#fields.errors('username')}}">
+                                            </div>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group" th:object="${user}">
+                                            <label><strong>Пароль</strong></label>
+                                            <input type="password" th:field="*{password}" th:required="false"
+                                                   th:class="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"
+                                                   th:value="(${user.getPassword()} == null) ? '' : ${user.getPassword()}"
+                                                   placeholder="Введите пароль пользователя">
+                                            <p th:if="${#fields.hasErrors('password')}">
+                                            <div class="invalid-feedback">
+                                                <p th:text="${{#fields.errors('password')}}">
+                                            </div>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group" th:object="${user}">
+                                            <label><strong>Имя</strong></label>
+                                            <input type="text" th:field="*{firstName}"
+                                                   th:class="${#fields.hasErrors('firstName')} ? 'form-control is-invalid' : 'form-control'"
+                                                   th:value="(${user.getFirstName()} == null) ? '' : ${user.getFirstName()}"
+                                                   placeholder="Введите имя пользователя">
+                                            <p th:if="${#fields.hasErrors('firstName')}">
+                                            <div class="invalid-feedback">
+                                                <p th:text="${{#fields.errors('firstName')}}">
+                                            </div>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group" th:object="${user}">
+                                            <label><strong>Фамилия</strong></label>
+                                            <input type="text" th:field="*{surName}"
+                                                   th:class="${#fields.hasErrors('surName')} ? 'form-control is-invalid' : 'form-control'"
+                                                   th:value="(${user.getSurName()} == null) ? '' : ${user.getSurName()}"
+                                                   placeholder="Введите фамилию пользователя">
+                                            <p th:if="${#fields.hasErrors('surName')}">
+                                            <div class="invalid-feedback">
+                                                <p th:text="${{#fields.errors('surName')}}">
+                                            </div>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group" th:object="${user}">
+                                            <label><strong>Возраст</strong></label>
+                                            <input type="text" th:field="*{age}"
+                                                   th:class="${#fields.hasErrors('age')} ? 'form-control is-invalid' : 'form-control'"
+                                                   th:value="(${user.getAge()} == null) ? '' : ${user.getAge()}"
+                                                   placeholder="Введите возраст пользователя">
+                                            <p th:if="${#fields.hasErrors('age')}">
+                                            <div class="invalid-feedback">
+                                                <p th:text="${{#fields.errors('age')}}">
+                                            </div>
+                                            </p>
+                                        </div>
+
+                                        <div class="form-group" th:object="${user}">
+                                            <label><strong>Почта</strong></label>
+                                            <input type="text" th:field="*{email}"
+                                                   th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                                                   th:value="(${user.getEmail()} == null) ? '' : ${user.getEmail()}"
+                                                   placeholder="Введите почту пользователя">
+                                            <p th:if="${#fields.hasErrors('email')}">
+                                            <div class="invalid-feedback">
+                                                <p th:text="${{#fields.errors('email')}}">
+                                            </div>
+                                            </p>
+                                        </div>
+
+                                        <fieldset th:object="${user}" th:each="role : ${roles}">
+                                            <strong>Выберите роли:</strong>
+                                            <select class="custom-select" multiple>
+                                                <option value="1">ADMIN</option>
+                                                <option value="2">USER</option>
+                                            </select>
+
+                                            <!--                                            <div class="checkbox" th:each="role : ${roles}">-->
+                                            <!--                                                <label>-->
+                                            <!--                                                    <input th:value="${role}" type="checkbox" th:field="*{roles}">-->
+                                            <!--                                                    <span th:text="${role.getAuthority()}" th:remove="tag"></span>-->
+                                            <!--                                                </label>-->
+                                            <!--                                            </div>-->
+                                            <!--                                            <span class="help-block" th:each="msg : ${#fields.errors('roles')}"-->
+                                            <!--                                                  th:text="${msg}">-->
+                                            <!--                                                    Some error message for this field-->
+                                            <!--                                            </span>-->
+                                        </fieldset>
+
+
+                                        <button class="btn btn-success mt-3" type="submit">Добавить нового
+                                            пользователя
+                                        </button>
+
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                <h1>Страница с информацией о пользователе</h1>
+                <div class="card" style="width: 95%">
+                    <div class="card-header">
+                        О пользователе
+                    </div>
+                    <div class="card-body">
+                        <div class="container-flex">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">НИК</th>
+                                    <th scope="col">ИМЯ</th>
+                                    <th scope="col">ФАМИЛИЯ</th>
+                                    <th scope="col">ВОЗРАСТ</th>
+                                    <th scope="col">ПОЧТА</th>
+                                    <th scope="col">РОЛИ</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="user : ${allUsers}">
+                                    <td th:text="${user.getId()}"></td>
+                                    <td th:text="${user.getUsername()}"></td>
+                                    <td th:text="${user.getFirstName()}"></td>
+                                    <td th:text="${user.getSurName()}"></td>
+                                    <td th:text="${user.getAge()}"></td>
+                                    <td th:text="${user.getEmail()}"></td>
+                                    <td th:text="${user.getRoles()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+</body>
+</html>
