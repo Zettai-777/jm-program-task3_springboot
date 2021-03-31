@@ -1,18 +1,23 @@
 package ru.zettai.jmprogramtask3_springboot.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.zettai.jmprogramtask3_springboot.entities.Role;
 import ru.zettai.jmprogramtask3_springboot.entities.User;
 import ru.zettai.jmprogramtask3_springboot.services.RoleService;
 import ru.zettai.jmprogramtask3_springboot.services.UserService;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -40,41 +45,46 @@ public class AdminController {
     }
 
     @GetMapping("/")
-    public String showAllUsers(
-            @ModelAttribute("user") User user,
-            Model model) {
+    public String showAllUsers(Model model, Principal principal) {
+        //добавляем всех пользователей
         List<User> allUsers = userService.getAllUsers();
         model.addAttribute("allUsers", allUsers);
-        model.addAttribute("user", user);
-        model.addAttribute("roles", roleService.getAllRoles());
+        //добавляем все роли
+        List<Role> allRoles = roleService.getAllRoles();
+        model.addAttribute("roles", allRoles);
+        //добавляем текущего пользователя
+        User currentUser = userService.getUserByUsername(principal.getName());
+        model.addAttribute("current_user", currentUser);
+        //добавляем роли текущего пользователя
+        model.addAttribute("userRoles", roleService.getAllRoles().stream().map(Role::getRole).collect(Collectors.toList()).toString());
+        //добавляем нового пользователя
+        model.addAttribute("new_user", new User());
         return "admin-panel";
-//        return "all-users";
     }
 
-//    @GetMapping("/addUser")
+//    @GetMapping("/new")
 //    public String addNewUser(
 //            @ModelAttribute("user") User user,
 //            Model model) {
 //        model.addAttribute("user", user);
 //        model.addAttribute("roles", roleService.getAllRoles());
-//        return "edit-user";
+//        return "admin-panel/new";
 //    }
 
 
-//    @PostMapping("/")
+//    @PostMapping()
     @PostMapping("/saveUser")
     public String saveUser(
             @Valid @ModelAttribute("user") User user,
             BindingResult bindingResult,
-            Model model,
-            @RequestParam Map<String, String> allParams) {
+            Model model) {
 
         if (bindingResult.hasErrors()) {
             Map<String, String> errorsMap = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errorsMap);
             model.addAttribute("user", user);
 //            return "edit-user";
-            return "admin-panel";
+            return "admin-panel/new";
         }else {
             userService.saveUser(user);
 //            return "redirect:/admin/";
@@ -85,9 +95,9 @@ public class AdminController {
     @GetMapping("/updateUserInfo/{userId}")
     public String getUserInfo(@PathVariable(name = "userId") long id, Model model) {
         User currentUser = userService.findUserById(id);
-        model.addAttribute("user", currentUser);
+        model.addAttribute("current_user", currentUser);
         model.addAttribute("roles", roleService.getAllRoles());
-        return "edit-user";
+        return "admin-panel";
     }
 
     @PostMapping("/updateUserInfo/{userId}")

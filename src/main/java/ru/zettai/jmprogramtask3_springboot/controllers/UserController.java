@@ -21,13 +21,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
-    public String getUserInformation(
-            Authentication authentication,
-            Model model) {
-        User currentUser = userService.getUserByUsername(authentication.getName());
-        model.addAttribute("user", currentUser);
-        model.addAttribute("rolse", currentUser.getRoles());
-        return "userPage";
-    }
+//    @GetMapping("/")
+//    public String getUserInformation(
+//            Authentication authentication,
+//            Model model) {
+//        User currentUser = userService.getUserByUsername(authentication.getName());
+//        model.addAttribute("userInfo", currentUser);
+//        model.addAttribute("rolesInfo", currentUser.getRoles());
+//        return "admin-panel";
+//        return "userPage";
+//    }
 }
